@@ -9,19 +9,23 @@ import (
 )
 
 func Open(device string) (DriveIntf, error) {
-	d, err := os.OpenFile(device, os.O_RDWR, 0)
-	if err != nil {
-		return nil, err
-	}
+	if device == "virtual" {
+		return virtualDrive(), nil
+	} else {
+		d, err := os.OpenFile(device, os.O_RDWR, 0)
+		if err != nil {
+			return nil, err
+		}
 
-	if isNVME(d) {
-		return NVMEDrive(d), nil
-	} else if isSCSI(d) {
-		return SCSIDrive(d), nil
-	}
+		if isNVME(d) {
+			return NVMEDrive(d), nil
+		} else if isSCSI(d) {
+			return SCSIDrive(d), nil
+		}
 
-	if err := d.Close(); err != nil {
-		return nil, err
+		if err := d.Close(); err != nil {
+			return nil, err
+		}
+		return nil, ErrDeviceNotSupported
 	}
-	return nil, ErrDeviceNotSupported
 }

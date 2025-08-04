@@ -72,8 +72,8 @@ func HandleComIDRequest(d drive.DriveIntf, comID ComID, req ComIDRequest) ([]byt
 	}
 
 	// TODO: Verify the request code in response?
-	size := binary.BigEndian.Uint16(buf[10:12])
-	return buf[12 : 12+size], nil
+	size := binary.BigEndian.Uint16(bufs[10:12])
+	return bufs[12 : 12+size], nil
 }
 
 // Validate a ComID.
